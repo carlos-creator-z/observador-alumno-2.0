@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel del Docente</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 400: '#38BDF8', 500: '#0EA5E9', 600: '#0284C7' } } } } };
+  </script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="maestros.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans antialiased overflow-x-hidden">
+  <script>
+    // Aplica el tema guardado ANTES de pintar la página (evita parpadeo)
+    (function () {
+      if (localStorage.getItem('docente-theme') === 'light') {
+        document.body.classList.add('light-mode');
+      }
+    })();
+  </script>
+
+  <nav id="navbar" class="glass-nav fixed top-0 left-0 right-0 z-50 py-4">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <button id="menu-toggle" class="md:hidden t-primary p-2 rounded-lg hover:bg-white/10 transition">
+          <iconify-icon icon="lucide:menu" width="24"></iconify-icon>
+        </button>
+        <iconify-icon icon="lucide:briefcase" class="text-brand-400" width="24"></iconify-icon>
+        <p class="font-bold t-primary text-sm hidden sm:block">Panel del Docente</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="theme-toggle" class="t-secondary hover:text-brand-400 transition p-2 rounded-lg hover:bg-white/10" title="Cambiar tema">
+          <iconify-icon id="theme-icon" icon="lucide:sun" width="22"></iconify-icon>
+        </button>
+        <button onclick="cerrarSesion()" class="morph-btn !py-2 !px-4 text-sm">Salir</button>
+      </div>
+    </div>
+  </nav>
+
+  <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-30 hidden md:hidden"></div>
+
+  <aside id="sidebar" class="w-64 fixed left-0 top-20 bottom-0 glass-light border-r border-[var(--divider)] p-6 z-40 transform -translate-x-full transition-transform duration-300 md:translate-x-0">
+    <nav class="space-y-2">
+      <button onclick="showSection('registrar', event)" class="nav-sidebar-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm t-secondary hover:bg-white/5 transition">
+        <iconify-icon icon="lucide:plus-circle" width="18"></iconify-icon> Registrar Observación
+      </button>
+      <button onclick="showSection('mis-registros', event)" class="nav-sidebar-btn w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg text-sm t-secondary hover:bg-white/5 transition">
+        <iconify-icon icon="lucide:list-checks" width="18"></iconify-icon> Mis Registros
+      </button>
+    </nav>
+  </aside>
+
+  <main class="flex-1 md:ml-64 p-4 md:p-8 relative z-10 pt-24 md:pt-28 min-w-0 max-w-full">
+
+    <section id="registrar" class="dashboard-section min-w-0 max-w-full">
+      <div class="glass-light rounded-2xl p-4 md:p-8 relative overflow-hidden w-full min-w-0">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-500/5 rounded-full blur-[80px] pointer-events-none"></div>
+        <div class="relative z-10 min-w-0">
+          <div class="section-header">
+            <div class="section-header-icon">
+              <iconify-icon icon="lucide:pencil-line" width="20"></iconify-icon>
+            </div>
+            <div>
+              <h2 class="section-header-title">Nueva Observación</h2>
+              <p class="section-header-sub">Registra un hecho académico o de convivencia</p>
+            </div>
+          </div>
+          <form onsubmit="submitObservation(event)" class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full min-w-0">
+            <div class="space-y-6 min-w-0">
+              <h4 class="text-xs font-semibold t-label uppercase tracking-wider flex items-center gap-2 text-brand-400"><iconify-icon icon="lucide:user" width="16"></iconify-icon> Información del Estudiante</h4>
+              <div class="float-group min-w-0">
+                <select id="student-select" required onchange="this.classList.add('has-value')" class="cursor-pointer"><option value="" disabled selected></option></select>
+                <label>Seleccionar Alumno</label>
+              </div>
+              <div class="float-group min-w-0">
+                <select id="obs-category" required onchange="this.classList.add('has-value')" class="cursor-pointer">
+                  <option value="" disabled selected></option>
+                  <option value="convivencia">Convivencia Escolar</option>
+                  <option value="academico">Desempeño Académico</option>
+                  <option value="puntualidad">Puntualidad y Asistencia</option>
+                  <option value="cuidado">Cuidado del Entorno</option>
+                </select>
+                <label>Categoría</label>
+              </div>
+              <div class="float-group min-w-0">
+                <input type="date" id="obs-date" required>
+                <label>Fecha del Hecho</label>
+              </div>
+            </div>
+            <div class="space-y-6 min-w-0">
+              <h4 class="text-xs font-semibold t-label uppercase tracking-wider flex items-center gap-2 text-brand-400"><iconify-icon icon="lucide:file-text" width="16"></iconify-icon> Detalles de la Observación</h4>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 min-w-0">
+                <button type="button" data-type="felicitacion" onclick="setObsType(this)" class="obs-type-btn"><iconify-icon icon="lucide:thumbs-up" width="20"></iconify-icon> <span class="text-xs">Felicitación</span></button>
+                <button type="button" data-type="atencion" onclick="setObsType(this)" class="obs-type-btn"><iconify-icon icon="lucide:alert-circle" width="20"></iconify-icon> <span class="text-xs">Atención</span></button>
+                <button type="button" data-type="compromiso" onclick="setObsType(this)" class="obs-type-btn"><iconify-icon icon="lucide:handshake" width="20"></iconify-icon> <span class="text-xs">Compromiso</span></button>
+                <button type="button" data-type="nota" onclick="setObsType(this)" class="obs-type-btn"><iconify-icon icon="lucide:file-text" width="20"></iconify-icon> <span class="text-xs">Nota</span></button>
+              </div>
+              <div class="float-group min-w-0">
+                <textarea id="obs-desc" rows="4" required placeholder=" " class="resize-none"></textarea>
+                <label>Descripción Objetiva</label>
+              </div>
+            </div>
+
+            <!-- LIENZO DE FIRMA DEL DOCENTE -->
+            <div class="md:col-span-2 min-w-0">
+              <label class="block text-xs font-semibold t-label uppercase tracking-wider mb-2 ml-1">Firma del Docente</label>
+              <div class="signature-box rounded-xl p-2 max-w-md mx-auto">
+                <canvas id="firma-docente-canvas" width="400" height="120" class="w-full cursor-crosshair" style="touch-action: none;"></canvas>
+              </div>
+              <button type="button" onclick="limpiarFirma('firma-docente-canvas')" class="text-xs t-muted hover:text-red-400 transition mt-1 block mx-auto max-w-md">Limpiar firma</button>
+            </div>
+
+            <div class="md:col-span-2 flex justify-end pt-4 border-t border-[var(--divider)] min-w-0">
+              <button type="submit" class="morph-btn flex items-center gap-2 py-3 px-6 text-sm w-full sm:w-auto justify-center"><iconify-icon icon="lucide:save" width="16"></iconify-icon> Registrar Observación</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="mis-registros" class="dashboard-section hidden min-w-0 max-w-full">
+      <div class="glass-light rounded-2xl p-4 md:p-8 w-full min-w-0">
+        <div class="section-header">
+          <div class="section-header-icon">
+            <iconify-icon icon="lucide:history" width="20"></iconify-icon>
+          </div>
+          <div>
+            <h2 class="section-header-title">Observaciones Realizadas</h2>
+            <p class="section-header-sub">Historial de tus registros en el sistema</p>
+          </div>
+        </div>
+        <div id="mis-registros-list" class="space-y-4 min-w-0">
+          <p class="t-muted text-sm">Cargando tus observaciones...</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script>
+    // ===== Modo claro / oscuro =====
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    function syncThemeIcon() {
+      themeIcon.setAttribute('icon', document.body.classList.contains('light-mode') ? 'lucide:moon' : 'lucide:sun');
+    }
+    syncThemeIcon();
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      localStorage.setItem('docente-theme', isLight ? 'light' : 'dark');
+      syncThemeIcon();
+      if (typeof showToast === 'function') showToast('info', isLight ? 'Modo claro activado' : 'Modo oscuro activado');
+    });
+  </script>
+  <script src="maestros.js"></script>
+</body>
+</html>

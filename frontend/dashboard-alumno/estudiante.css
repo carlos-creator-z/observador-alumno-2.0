@@ -1,0 +1,123 @@
+/* ============================================================
+   ESTUDIANTE.CSS — Panel del Alumno
+   Paleta unificada con el login, admin y docentes
+============================================================ */
+
+/* ===== 1. VARIABLES DE COLOR ===== */
+:root {
+  --bg-body: #101B31; --bg-section: #15223C; --bg-card: #1A2A47;
+  --text-primary: #ffffff; --text-secondary: rgba(255, 255, 255, 0.55);
+  --text-muted: rgba(255, 255, 255, 0.35); --text-label: rgba(255, 255, 255, 0.45);
+  --text-dim: rgba(255, 255, 255, 0.3); --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1); --nav-bg: rgba(21, 34, 60, 0.7);
+  --nav-scrolled: rgba(21, 34, 60, 0.92); --nav-border: rgba(14, 165, 233, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.05); --input-border: rgba(255, 255, 255, 0.1);
+  --input-focus-border: #0EA5E9; --divider: rgba(255, 255, 255, 0.06);
+}
+body.light-mode {
+  --bg-body: #F0F9FF; --bg-section: #E0F2FE; --bg-card: #FFFFFF;
+  --text-primary: #0C4A6E; --text-secondary: rgba(12, 74, 110, 0.6);
+  --text-muted: rgba(12, 74, 110, 0.4); --text-label: rgba(12, 74, 110, 0.5);
+  --text-dim: rgba(12, 74, 110, 0.3); --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(14, 165, 233, 0.15); --nav-bg: rgba(240, 249, 255, 0.85);
+  --nav-scrolled: rgba(240, 249, 255, 0.95); --nav-border: rgba(14, 165, 233, 0.1);
+  --input-bg: rgba(14, 165, 233, 0.04); --input-border: rgba(14, 165, 233, 0.15);
+  --input-focus-border: #0284C7; --divider: rgba(14, 165, 233, 0.1);
+}
+
+/* ===== 2. BASE ===== */
+html, body { overflow-x: hidden; max-width: 100vw; }
+body { background: var(--bg-body); color: var(--text-primary); transition: background .4s ease, color .4s ease; }
+
+/* ===== 3. UTILIDADES DE TEXTO ===== */
+.t-primary { color: var(--text-primary); }
+.t-secondary { color: var(--text-secondary); }
+.t-muted { color: var(--text-muted); }
+.t-label { color: var(--text-label); }
+.t-dim { color: var(--text-dim); }
+.font-signature { font-family: 'Brush Script MT', cursive, 'Inter', sans-serif; font-style: italic; }
+
+/* ===== 4. BADGES ===== */
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+.badge-info { background: rgba(14, 165, 233, 0.15); color: #38BDF8; }
+.badge-success { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+.badge-warning { background: rgba(245, 158, 11, 0.15); color: #FBBF24; }
+
+/* ===== 5. BORDE DEGRADADO ===== */
+.gradient-border { position: relative; }
+.gradient-border::before { content: ''; position: absolute; inset: -1px; border-radius: inherit; padding: 1px; background: linear-gradient(135deg, rgba(14, 165, 233, 0.5), rgba(186, 230, 253, 0.3), rgba(14, 165, 233, 0.1)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+
+/* ===== 6. COMPONENTES GLASS ===== */
+.glass-nav { background: var(--nav-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid var(--nav-border); }
+.glass-light { background: var(--glass-bg); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border); transition: background .4s ease, border-color .4s ease; }
+
+/* ===== 7. CASILLAS CON ETIQUETA FLOTANTE ===== */
+.float-group { position: relative; }
+.float-group input, .float-group select, .float-group textarea { width: 100%; padding: 20px 16px 8px 48px; background: var(--input-bg); border: 1.5px solid var(--input-border); border-radius: 12px; color: var(--text-primary); font-size: 15px; outline: none; transition: border-color .3s ease, box-shadow .3s ease; font-family: 'Inter', sans-serif; min-width: 0; max-width: 100%; }
+.float-group textarea { padding-top: 24px; min-height: 100px; resize: vertical; }
+.float-group input:focus, .float-group select:focus, .float-group textarea:focus { border-color: var(--input-focus-border); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15), 0 0 20px rgba(14, 165, 233, 0.08); }
+.float-group label { position: absolute; left: 48px; top: 18px; color: var(--text-muted); font-size: 15px; pointer-events: none; transition: all .25s cubic-bezier(.16, 1, .3, 1); }
+.float-group input:focus + label, .float-group input:not(:placeholder-shown) + label, .float-group textarea:focus + label, .float-group textarea:not(:placeholder-shown) + label { top: 8px; transform: translateY(0); font-size: 11px; font-weight: 600; color: #38BDF8; }
+.float-group .input-icon { position: absolute; left: 16px; top: 18px; color: var(--text-dim); pointer-events: none; }
+.float-group select option { background: #1A2A47; color: #fff; }
+
+/* ===== 8. BOTONES ===== */
+.morph-btn { position: relative; overflow: hidden; padding: 12px 24px; border: none; border-radius: 12px; font-weight: 600; font-size: 14px; color: #fff; cursor: pointer; background: linear-gradient(135deg, #0284C7, #0EA5E9); transition: transform .3s ease, box-shadow .3s ease; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); }
+.morph-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(14, 165, 233, 0.45); }
+
+/* ===== 9. TOASTS ===== */
+.toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
+.toast { padding: 14px 20px; border-radius: 12px; display: flex; align-items: center; gap: 10px; color: #fff; font-size: 14px; font-weight: 500; min-width: 280px; max-width: calc(100vw - 40px); animation: toastIn .4s cubic-bezier(.16, 1, .3, 1); }
+.toast-success { background: rgba(5, 150, 105, 0.9); }
+.toast-error { background: rgba(220, 38, 38, 0.9); }
+.toast-info { background: rgba(14, 165, 233, 0.9); }
+.toast-warning { background: rgba(217, 119, 6, 0.9); }
+@keyframes toastIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+/* ===== 10. TARJETAS DE OBSERVACIÓN (generadas por estudiante.js) ===== */
+#observations-container > * { min-width: 0; max-width: 100%; }
+
+/* ===== 11. RESPONSIVE MÓVIL ===== */
+@media (max-width: 640px) {
+  .glass-light.rounded-xl, .glass-light.rounded-2xl { padding: 1rem !important; }
+  .toast { min-width: 0; width: calc(100vw - 40px); }
+}
+
+/* ===== 12. AJUSTES DE MODO CLARO ===== */
+
+/* Tarjetas internas con fondo blanco translúcido (descripción, etc.) */
+body.light-mode .bg-white\/\[0\.02\],
+body.light-mode .bg-white\/\[0\.03\],
+body.light-mode .bg-white\/\[0\.04\],
+body.light-mode .bg-white\/5 {
+  background: rgba(14, 165, 233, 0.06) !important;
+  border-color: rgba(14, 165, 233, 0.15) !important;
+}
+
+/* Hovers genéricos sobre fondo claro */
+body.light-mode .hover\:bg-white\/5:hover,
+body.light-mode .hover\:bg-white\/10:hover {
+  background: rgba(14, 165, 233, 0.1) !important;
+}
+
+/* Números de estadísticas con contraste en claro */
+body.light-mode .text-amber-400 { color: #B45309 !important; }
+body.light-mode .text-emerald-400 { color: #047857 !important; }
+
+/* Textos blancos que venían del JS dentro de tarjetas */
+body.light-mode .text-white { color: var(--text-primary) !important; }
+body.light-mode .text-gray-300, body.light-mode .text-slate-300 { color: var(--text-secondary) !important; }
+body.light-mode .text-gray-400, body.light-mode .text-slate-400 { color: var(--text-muted) !important; }
+
+/* Firma en cursiva */
+body.light-mode .font-signature { color: var(--text-secondary); }
+
+/* Dropdown claro */
+body.light-mode .float-group select option { background: #ffffff; color: #0C4A6E; }
+
+/* Hover del botón de tema */
+body.light-mode #theme-toggle:hover { background: rgba(14, 165, 233, 0.1); }
+
+/* Scrollbar acorde */
+body.light-mode ::-webkit-scrollbar-track { background: #E0F2FE; }
+body.light-mode ::-webkit-scrollbar-thumb { background: #0284C7; }

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Observador Digital - IE Francisco de Paula Santander</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: { 50: '#F0F9FF', 100: '#E0F2FE', 200: '#BAE6FD', 300: '#7DD3FC', 400: '#38BDF8', 500: '#0EA5E9', 600: '#0284C7', 700: '#0369A1', 800: '#075985', 900: '#0C4A6E' },
+            surface: { 50: '#F8FAFC', 100: '#F1F5F9', 800: '#1A2A47', 900: '#15223C', 950: '#101B31' }
+          }
+        }
+      }
+    };
+  </script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="login.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans antialiased">
+  <div id="reading-progress"></div>
+  <div id="particles-container" class="fixed inset-0 z-0 overflow-hidden pointer-events-none"></div>
+  <div id="back-to-top"><iconify-icon icon="lucide:arrow-up" width="20"></iconify-icon></div>
+
+  <nav id="navbar" class="glass-nav fixed top-0 left-0 right-0 z-50 py-4">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center border border-brand-500/30 overflow-hidden">
+          <img src="https://z-cdn-media.chatglm.cn/files/9d8cfed5-f15b-4510-8be5-5c057fc5ed53.jpg?auth_key=1888374843-c7506523e05d4ed2a9ad02ee92273ad2-0-0db295a739740cb2ac6bd06578de05f4" alt="Escudo IE Francisco de Paula Santander" class="w-full h-full object-contain p-0.5">
+        </div>
+        <div>
+          <p class="font-bold t-primary text-sm">IE Francisco de Paula</p>
+          <p class="text-xs t-muted">Observador Digital</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <button id="theme-toggle" class="tooltip-wrap t-secondary hover:text-brand-400 transition">
+          <iconify-icon id="theme-icon" icon="lucide:sun" width="22"></iconify-icon>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <section id="inicio" class="relative min-h-screen flex items-center pt-24 pb-12 px-6 overflow-hidden">
+    <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-brand-400/5 rounded-full blur-3xl"></div>
+    
+    <div class="container mx-auto grid md:grid-cols-2 gap-12 items-center relative z-10">
+      <div class="reveal-left">
+        <div class="hero-shield-wrap mb-6">
+          <div class="hero-shield">
+            <span class="shield-glow" aria-hidden="true"></span>
+            <span class="shield-ring" aria-hidden="true"></span>
+            <img src="https://z-cdn-media.chatglm.cn/files/9d8cfed5-f15b-4510-8be5-5c057fc5ed53.jpg?auth_key=1888374843-c7506523e05d4ed2a9ad02ee92273ad2-0-0db295a739740cb2ac6bd06578de05f4" alt="Escudo IE Francisco de Paula Santander">
+          </div>
+        </div>
+
+        <h1 class="hero-title mb-5">
+          <span class="hero-eyebrow"><span class="eyebrow-line"></span>Observador del</span>
+          <span class="hero-main">
+            <span class="grad-1">Alumno</span>
+            <span class="grad-2">Digital</span>
+          </span>
+        </h1>
+        <div class="title-underline mb-6"></div>
+
+        <p class="text-base sm:text-lg t-secondary mb-2 max-w-md">Plataforma moderna para el registro de observaciones, seguimiento académico y convivencial de nuestros estudiantes.</p>
+
+        <div class="flex flex-wrap gap-2.5 mt-7">
+          <div class="mini-feature"><iconify-icon icon="lucide:clipboard-check" width="16"></iconify-icon> Observaciones</div>
+          <div class="mini-feature"><iconify-icon icon="lucide:trending-up" width="16"></iconify-icon> Seguimiento académico</div>
+          <div class="mini-feature"><iconify-icon icon="lucide:heart-handshake" width="16"></iconify-icon> Convivencia escolar</div>
+        </div>
+      </div>
+
+      <div id="login" class="reveal-right">
+        <div class="glass-light gradient-border login-card rounded-2xl p-8 max-w-md mx-auto">
+          <div class="login-header mb-6">
+            <div class="login-head-icon"><iconify-icon icon="lucide:lock-keyhole" width="24"></iconify-icon></div>
+            <h2 class="text-2xl font-bold t-primary">Iniciar Sesión</h2>
+            <p class="t-secondary text-sm mt-1">Selecciona tu tipo de usuario e ingresa tus credenciales.</p>
+          </div>
+
+          <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="float-group mb-4">
+              <input type="text" id="username" placeholder=" " required>
+              <label>Documento</label>
+              <iconify-icon icon="lucide:id-card" class="input-icon" width="20"></iconify-icon>
+            </div>
+            <div class="float-group mb-6">
+              <input type="password" id="password" placeholder=" " required>
+              <label>Contraseña</label>
+              <iconify-icon icon="lucide:lock" class="input-icon" width="20"></iconify-icon>
+              <span class="password-toggle" onclick="togglePassword()"><iconify-icon id="eye-icon" icon="lucide:eye" width="20"></iconify-icon></span>
+            </div>
+            <button type="submit" id="login-btn" class="morph-btn w-full flex items-center justify-center gap-2">
+              <span id="btn-text">Ingresar al Observador</span>
+              <iconify-icon id="btn-icon" icon="lucide:log-in" width="18"></iconify-icon>
+              <div id="btn-spinner" class="hidden animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+            </button>
+          </form>
+          <button type="button" onclick="setupSystem()" class="mt-4 text-xs t-muted hover:text-brand-400 transition w-full text-center">Inicializar Sistema (Primer Uso)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="toast-container" class="toast-container"></div>
+  <div id="success-modal" class="modal-overlay">
+    <div class="modal-content glass-light rounded-2xl p-8 max-w-sm text-center mx-4">
+      <div class="checkmark-circle mx-auto mb-4"><iconify-icon icon="lucide:check" width="40" style="color:white"></iconify-icon></div>
+      <h3 class="text-xl font-bold t-primary mb-2">¡Éxito!</h3>
+      <p id="modal-message" class="t-secondary text-sm mb-6"></p>
+      <button type="button" onclick="closeModal()" class="morph-btn">Continuar</button>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel del Alumno</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = { theme: { extend: { colors: { brand: { 400: '#38BDF8', 500: '#0EA5E9', 600: '#0284C7' } } } } };
+  </script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <link rel="stylesheet" href="estudiante.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans antialiased overflow-x-hidden">
+  <script>
+    // Aplica el tema guardado ANTES de pintar la página (evita parpadeo)
+    (function () {
+      if (localStorage.getItem('alumno-theme') === 'light') {
+        document.body.classList.add('light-mode');
+      }
+    })();
+  </script>
+
+  <nav id="navbar" class="glass-nav fixed top-0 left-0 right-0 z-50 py-4">
+    <div class="container mx-auto px-6 flex justify-between items-center">
+      <div class="flex items-center gap-3 min-w-0">
+        <iconify-icon icon="lucide:graduation-cap" class="text-brand-400 flex-shrink-0" width="24"></iconify-icon>
+        <div class="min-w-0">
+          <p class="font-bold t-primary text-sm">Panel del Alumno</p>
+          <p id="user-name" class="text-xs t-muted truncate">Cargando...</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <button id="theme-toggle" class="t-secondary hover:text-brand-400 transition p-2 rounded-lg hover:bg-white/10" title="Cambiar tema">
+          <iconify-icon id="theme-icon" icon="lucide:sun" width="22"></iconify-icon>
+        </button>
+        <button onclick="cerrarSesion()" class="morph-btn !py-2 !px-4 text-sm">Salir</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="pt-24 pb-12 px-4 sm:px-6 container mx-auto relative z-10 max-w-full">
+    <h1 class="text-2xl sm:text-3xl font-bold mb-8 t-primary">Mis Observaciones</h1>
+    
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+      <div class="glass-light rounded-xl p-4 text-center min-w-0">
+        <p class="text-xs t-muted uppercase">Total</p>
+        <p class="text-xl font-bold t-primary">0</p>
+      </div>
+      <div class="glass-light rounded-xl p-4 text-center min-w-0">
+        <p class="text-xs t-muted uppercase">Pendientes</p>
+        <p class="text-xl font-bold text-amber-400">0</p>
+      </div>
+      <div class="glass-light rounded-xl p-4 text-center min-w-0 col-span-2 sm:col-span-1">
+        <p class="text-xs t-muted uppercase">Firmadas</p>
+        <p class="text-xl font-bold text-emerald-400">0</p>
+      </div>
+    </div>
+
+    <div id="observations-container" class="space-y-6"></div>
+  </main>
+  <div id="toast-container" class="toast-container"></div>
+
+  <script>
+    // ===== Modo claro / oscuro =====
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    function syncThemeIcon() {
+      themeIcon.setAttribute('icon', document.body.classList.contains('light-mode') ? 'lucide:moon' : 'lucide:sun');
+    }
+    syncThemeIcon();
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light-mode');
+      localStorage.setItem('alumno-theme', isLight ? 'light' : 'dark');
+      syncThemeIcon();
+      if (typeof showToast === 'function') showToast('info', isLight ? 'Modo claro activado' : 'Modo oscuro activado');
+    });
+  </script>
+  <script src="estudiante.js"></script>
+</body>
+</html>
