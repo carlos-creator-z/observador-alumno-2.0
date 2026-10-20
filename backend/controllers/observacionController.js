@@ -374,51 +374,94 @@ function dibujarEncabezado(doc, y = 30) {
 
 
 // Función principal exportada para la ruta: Generar PDF
+// ==========================================
+// Generación de PDF Físico
+// ==========================================
+
+// Función principal exportada para la ruta: Generar PDF
 exports.generarPDF = async (req, res) => {
   try {
+    // Buscar la observación y popular las referencias
     const obs = await Observacion.findById(req.params.id)
       .populate('alumno', 'nombre apellido grado')
       .populate('registradoPor', 'nombre apellido');
 
+    // Validar que la observación exista
     if (!obs) {
-      return res.status(404).json({ message: 'Observación no encontrada' });
+      return res.status(404).json({ 
+        message: 'Observación no encontrada' 
+      });
     }
 
-    // Seguridad: Un alumno solo puede descargar sus propios PDFs
+    // ==========================================
+    // Validación de permisos por rol
+    // ==========================================
+    
+    // Si es alumno, solo puede descargar sus propios PDFs
     if (req.user.rol === 'alumno' && obs.alumno._id.toString() !== req.user.id) {
-      return res.status(403).json({ message: 'Sin permiso para ver este documento' });
+      return res.status(403).json({ 
+        message: 'Sin permiso para ver este documento' 
+      });
+    }
+    
+    // Si es profesor, validar que el alumno pertenezca a uno de sus grados
+    if (req.user.rol === 'profesor') {
+      const gradoAlumno = obs.alumno?.grado;
+      const gradosAsignados = req.user.grados || [];
+      
+      if (!gradosAsignados.includes(gradoAlumno)) {
+        return res.status(403).json({ 
+          message: 'No tienes permiso para descargar el PDF de este alumno (grado no asignado)' 
+        });
+      }
     }
 
-    // Configurar el documento PDF
+    // ==========================================
+    // Generación del documento PDF
+    // ==========================================
+    
     const doc = new PDFDocument({
       size: 'LETTER',
-      margins: { top: 25, bottom: 25, left: 40, right: 40 },
+      margins: { 
+        top: 25, 
+        bottom: 25, 
+        left: 40, 
+        right: 40 
+      },
       info: {
         Title: 'Observador del Estudiante',
-        Author: 'IE Francisco de Paula Santander',
-      },
+        Author: 'IE Francisco de Paula Santander'
+      }
     });
 
+    // Configurar headers de respuesta HTTP
     const fileName = `Observacion_${obs._id || 'nueva'}.pdf`;
     
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
+    
+    // Conectar el stream del PDF a la respuesta HTTP
     doc.pipe(res);
 
-    // Dibujar encabezado
+    // Dibujar encabezado institucional
     let y = dibujarEncabezado(doc, 30);
+    
     doc.moveTo(40, y - 5)
         .lineTo(555, y - 5)
         .lineWidth(1)
         .strokeColor('#000000')
         .stroke();
 
-    // Dibujar bloque de la observación (1 sola vez = 1 sola página)
+    // Dibujar bloque de la observación
     y = dibujarBloqueObservacion(doc, obs, y);
 
-    // Finalizar el documento
+    // Finalizar y enviar el documento
     doc.end();
+    
   } catch (error) {
-    res.status(500).json({ message: 'Error al generar el PDF' });
+    res.status(500).json({ 
+      message: 'Error al generar el PDF',
+      error: error.message 
+    });
   }
 };

@@ -4,69 +4,34 @@
 const express = require('express');
 const router = express.Router();
 
-// Middlewares de seguridad
 const { protect } = require('../middleware/authMiddleware');
 const { authorize } = require('../middleware/roleMiddleware');
+const { validarCreacionUsuario } = require('../middleware/validate');
 
-// Controladores
 const { 
   getAlumnos, 
   createUsuario, 
   getAllUsers, 
   getProfesores, 
-  asignarGrados 
+  asignarGrados,
+  deleteUsuario  // <-- NUEVO
 } = require('../controllers/usuarioController');
 
 
 // ==========================================
-// Definición de Rutas (/api/usuarios)
+// Rutas
 // ==========================================
 
-// --- Gestión de Alumnos ---
-// Obtener alumnos (filtrado por grados si es profesor)
-router.get(
-  '/alumnos', 
-  protect, 
-  authorize('profesor', 'admin'), 
-  getAlumnos
-);
+router.get('/alumnos', protect, authorize('profesor', 'admin'), getAlumnos);
+router.get('/all', protect, authorize('admin'), getAllUsers);
+router.get('/profesores', protect, authorize('admin'), getProfesores);
+router.put('/profesores/:id/grados', protect, authorize('admin'), asignarGrados);
 
-// Obtener todos los alumnos (Para vista de grados en Admin)
-router.get(
-  '/all', 
-  protect, 
-  authorize('admin'), 
-  getAllUsers
-);
+// Crear usuario con validación previa
+router.post('/', protect, authorize('admin'), validarCreacionUsuario, createUsuario);
 
-// --- Gestión de Profesores y Grados ---
-// Obtener todos los profesores
-router.get(
-  '/profesores', 
-  protect, 
-  authorize('admin'), 
-  getProfesores
-);
-
-// Asignar grados a un profesor específico
-router.put(
-  '/profesores/:id/grados', 
-  protect, 
-  authorize('admin'), 
-  asignarGrados
-);
-
-// --- Creación de Usuarios ---
-// Crear nuevo usuario (Alumno o Profesor)
-router.post(
-  '/', 
-  protect, 
-  authorize('admin'), 
-  createUsuario
-);
+// Eliminar usuario (borrado lógico) - NUEVO
+router.delete('/:id', protect, authorize('admin'), deleteUsuario);
 
 
-// ==========================================
-// Exportación
-// ==========================================
 module.exports = router;

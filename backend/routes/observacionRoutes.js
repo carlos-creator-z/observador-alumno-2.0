@@ -8,6 +8,9 @@ const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
 const { authorize } = require('../middleware/roleMiddleware');
 
+// Middleware de validación
+const { validarCreacionObservacion } = require('../middleware/validate');
+
 // Controladores
 const { 
   createObservacion, 
@@ -20,19 +23,23 @@ const {
 
 
 // ==========================================
-// Definición de Rutas (/api/observaciones)
+// Rutas de Creación de Observaciones
 // ==========================================
 
-// --- Creación ---
-// Crear nueva observación (Solo profesores o admin)
+// Crear nueva observación (con validación previa)
 router.post(
   '/', 
   protect, 
   authorize('profesor', 'admin'), 
+  validarCreacionObservacion, 
   createObservacion
 );
 
-// --- Lectura ---
+
+// ==========================================
+// Rutas de Consulta de Observaciones
+// ==========================================
+
 // Ver todas las observaciones del sistema (Solo admin)
 router.get(
   '/', 
@@ -41,7 +48,7 @@ router.get(
   getAllObservaciones
 );
 
-// Ver observaciones propias del alumno logueado
+// Ver observaciones propias (Alumno)
 router.get(
   '/mis-observaciones', 
   protect, 
@@ -49,7 +56,7 @@ router.get(
   getMyObservaciones
 );
 
-// Ver observaciones realizadas por el profesor/admin logueado
+// Ver observaciones realizadas (Profesor/Admin)
 router.get(
   '/mis-registros', 
   protect, 
@@ -57,15 +64,19 @@ router.get(
   getMyRegistros
 );
 
-// Descargar PDF físico de una observación (Accesible para cualquier rol logueado)
+// Descargar PDF físico de una observación
 router.get(
   '/pdf/:id', 
   protect, 
   generarPDF
 );
 
-// --- Actualización ---
-// Firmar observación y agregar descargos (Solo el alumno dueño)
+
+// ==========================================
+// Rutas de Actualización de Observaciones
+// ==========================================
+
+// Firmar observación y agregar descargos (Alumno)
 router.patch(
   '/firmar/:id', 
   protect, 

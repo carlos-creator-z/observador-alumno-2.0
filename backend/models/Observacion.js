@@ -24,15 +24,18 @@ const observacionSchema = new mongoose.Schema({
   // --- Detalles del Hecho ---
   tipo: { 
     type: String, 
+    enum: ['felicitacion', 'atencion', 'compromiso', 'nota'],
     required: true 
   },
   categoria: { 
     type: String, 
+    enum: ['convivencia', 'academico', 'puntualidad', 'cuidado'],
     required: true 
   },
   descripcion: { 
     type: String, 
-    required: true 
+    required: true,
+    minlength: 10
   },
   fechaHecho: { 
     type: Date, 
@@ -42,6 +45,7 @@ const observacionSchema = new mongoose.Schema({
   // --- Estado y Descargos ---
   status: { 
     type: String, 
+    enum: ['pendiente', 'firmado'],
     default: 'pendiente' 
   },
   descargo: { 
@@ -64,8 +68,24 @@ const observacionSchema = new mongoose.Schema({
   }
   
 }, { 
-  timestamps: true // Añade automáticamente createdAt y updatedAt
+  timestamps: true 
 });
+
+
+// ==========================================
+// Índices para Optimización de Consultas
+// ==========================================
+
+// Índice compuesto para acelerar la consulta del panel del alumno
+// (observaciones de un alumno ordenadas por fecha de creación)
+observacionSchema.index({ alumno: 1, createdAt: -1 });
+
+// Índice para acelerar la consulta del panel del profesor
+// (observaciones realizadas por un profesor)
+observacionSchema.index({ registradoPor: 1, createdAt: -1 });
+
+// Índice para acelerar el filtrado por estado en el panel del admin
+observacionSchema.index({ status: 1, createdAt: -1 });
 
 
 // ==========================================
