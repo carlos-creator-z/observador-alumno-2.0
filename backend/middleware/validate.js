@@ -5,7 +5,7 @@ const { body, validationResult } = require('express-validator');
 
 
 // ==========================================
-// Middleware: Verificador genérico de validación
+// Middleware: Verificador de validación
 // ==========================================
 
 // Verifica si express-validator detectó errores.
